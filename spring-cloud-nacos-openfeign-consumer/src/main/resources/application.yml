@@ -1,0 +1,42 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        username: nacos
+        password: nacos
+server:
+  port: 9100
+logging:
+  level:
+    com.nestor.springcloudopenfeignapi.producer: debug
+feign:
+  client:
+    config:
+      default:
+        readTimeout: 7000
+        connectTimeout: 2000
+      nacos-producer:
+        loggerLevel: basic
+        requestInterceptors: com.nestor.springcloudopenfeignapi.support.TokenRequestInterceptor
+  httpclient:
+    enabled: true
+    # 最大连接数
+    max-connections: 200
+    # 每个路径可以占用的最大连接数
+    max-connections-per-route: 20
+  #  开启压缩可以有效节约网络资源
+  compression:
+    request:
+      enabled: true
+    response:
+      enabled: true
+
+ribbon:
+  eager-load:
+    clients: nacos-producer
+    enabled: true
+
+producer:
+  service:
+    name: nacos-producer

@@ -1,0 +1,19 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        #        namespace: 364baeab-dbcd-41ba-b842-f8895dc835c1
+        #        group: producers
+        cluster-name: BJ-CLUSTER
+        metadata:
+          current-version: V2
+        username: nacos
+        password: nacos
+  application:
+    name: nacos-producer
+server:
+  port: 8081
+  tomcat:
+    max-threads: 400
+    min-spare-threads: 100

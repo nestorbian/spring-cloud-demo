@@ -1,0 +1,62 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        #        namespace: 364baeab-dbcd-41ba-b842-f8895dc835c1
+        #        group: producers
+        cluster-name: BJ-CLUSTER
+        metadata:
+          current-version: V2
+        username: nacos
+        password: nacos
+    loadbalancer:
+      retry:
+        enabled: true
+  application:
+    name: spring-cloud-nacos-hystrix-producer
+server:
+  port: 8081
+  tomcat:
+    max-threads: 400
+    min-spare-threads: 100
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always # 显示健康状态的细节
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 1000 # 配置全局默认的超时时间=默认值
+      circuitBreaker:
+        requestVolumeThreshold: 20 # 时间窗口内最小请求数，达到最小请求数才可能会触发熔断=默认值
+        sleepWindowInMilliseconds: 5000 # 熔断等待时间=默认值
+      metrics:
+        rollingStats:
+          timeInMilliseconds: 10000 # 时间窗口时间=默认值
+    hystrix-annotation3:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 3000 # 针对commandKey=hystrix-annotation3的方法配置超时时间
+    hystrix-annotation5:
+      circuitBreaker:
+        requestVolumeThreshold: 5 # 针对commandKey=hystrix-annotation5的方法配置, 时间窗口内最小请求数，达到最小请求数才可能会触发熔断
+        sleepWindowInMilliseconds: 15000 # 针对commandKey=hystrix-annotation5的方法配置, 熔断等待时间
+        errorThresholdPercentage: 80 # 针对commandKey=hystrix-annotation5的方法配置, 失败比例触发熔断
+        metrics:
+          rollingStats:
+            timeInMilliseconds: 10000 # 针对commandKey=hystrix-annotation5的方法配置, 时间窗口时间
+  # 限流配置
+  threadpool:
+    hystrix-annotation7: # threadPoolKey
+      coreSize: 10 # 核心线程数
+      maxQueueSize: 10 # BlockingQueue 的最大队列数
+      queueSizeRejectionThreshold: 5 # 即使没有达到 maxQueueSize，但若达到 queueSizeRejectionThreshold 该值后，请求也会被拒绝。

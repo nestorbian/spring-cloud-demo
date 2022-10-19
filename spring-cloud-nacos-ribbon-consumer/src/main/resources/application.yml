@@ -1,0 +1,56 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        #        server-addr: 192.168.157.130:80
+        server-addr: localhost:8848
+        cluster-name: NJ-CLUSTER
+        metadata:
+          current-version: V1
+        username: nacos
+        password: nacos
+#    loadbalancer:
+#      retry:
+#        enabled: true
+  #        namespace: 364baeab-dbcd-41ba-b842-f8895dc835c1
+  #        group: producers
+  application:
+    name: nacos-consumer
+server:
+  port: 9002
+# 不同客户端配置不同的策略 具体如何配置参考 PropertiesFactory
+nacos-producer:
+  ribbon:
+    #    NFLoadBalancerRuleClassName: com.nestor.springcloudnacosconsumer.rule.SameClusterAndVersionPriorityRule
+#    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RetryRule
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RoundRobinRule
+    MaxAutoRetries: 2
+    MaxAutoRetriesNextServer: 1
+    OkToRetryOnAllOperations: false
+    RetryableStatusCodes: 500,404,502
+    ConnectTimeout: 500
+    ReadTimeout: 500
+#    MaxTotalConnections: 111
+#    MaxConnectionPerHost: 111
+nacos-producer1:
+  ribbon:
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+    ConnectTimeout: 500
+    ReadTimeout: 2000
+    MaxTotalConnections: 500
+    MaxConnectionPerHost: 50
+# 全局ribbon配置
+ribbon:
+  #饥饿加载 RibbonEagerLoadProperties
+#  eager-load:
+#    enabled: true
+#    clients: nacos-producer,nacos-producer1
+  # 疑问点:http.client.enabled=true重试配置以及连接超时读取超时才起作用
+  ConnectTimeout: 500
+  ReadTimeout: 2000
+  MaxTotalConnections: 500
+  MaxConnectionPerHost: 50
+  # 开启才使用httpClient，否则默认httpUrlConnection
+  http:
+    client:
+      enabled: true

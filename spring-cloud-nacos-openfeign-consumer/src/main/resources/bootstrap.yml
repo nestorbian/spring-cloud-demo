@@ -1,0 +1,30 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848
+        username: nacos
+        password: nacos
+#        file-extension: json
+        group: consumer
+        namespace: 364baeab-dbcd-41ba-b842-f8895dc835c1
+        # 越往后优先级越高
+        extension-configs:
+          - dataId: extension-config.yml
+            group: extension
+            refresh: true
+          - dataId: extension-other-config.yml
+            group: extension
+            refresh: true
+        # 越往后优先级越高
+        shared-configs:
+          - dataId: common1.yml
+            group: common
+            refresh: true
+          - dataId: common2.yml
+            group: common
+            refresh: true
+#        修改默认前缀，默认${spring.application.name}
+#        prefix: nacos-config-demo
+  application:
+    name: nacos-openfeign-consumer

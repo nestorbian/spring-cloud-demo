@@ -1,0 +1,50 @@
+server:
+  port: 8001
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,beans
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: time_route
+          uri: https://example.org
+          predicates:
+            - Path=/java
+            - Between=2017-02-20T17:42:47.789-07:00[America/Denver], 2020-02-20T17:42:47.789-07:00[America/Denver]
+        #          - Weight=group1, 2
+        - id: cookie_route
+          uri: http://ityouknow.com
+          predicates:
+            - Cookie=name, b.y
+            - Header=X-Request-Id, \d+
+            - Host=**.org
+            - Method=GET
+            - Path=/blue*/{name}
+            - Query=name, bzy
+            - RemoteAddr=127.0.0.1
+        #          - Weight=group1, 8
+        - id: producer1_route
+          # locator.enabled=false依旧有效，enable能通过http://localhost:8001/服务名/**访问
+          uri: lb://spring-cloud-producer1
+          filters:
+            - AddRequestParameter=name, bzy
+          predicates:
+            #配置成/producer1无法路由/producer1/info，需要配置成/producer1/*
+            - Path=/producer1/info
+      discovery:
+        locator:
+          enabled: true
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        service-name: ${spring.application.name}
+  application:
+    name: spring-cloud-gateway-example
+logging:
+  level:
+    org.springframework.cloud.gateway: debug

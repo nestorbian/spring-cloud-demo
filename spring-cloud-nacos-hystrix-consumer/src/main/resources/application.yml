@@ -1,0 +1,75 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        #        namespace: 364baeab-dbcd-41ba-b842-f8895dc835c1
+        #        group: producers
+        cluster-name: BJ-CLUSTER
+        metadata:
+          current-version: V2
+        username: nacos
+        password: nacos
+  application:
+    name: spring-cloud-nacos-hystrix-consumer
+server:
+  port: 8082
+  tomcat:
+    max-threads: 400
+    min-spare-threads: 100
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always # 显示健康状态的细节 可以看见hystrix熔断状态
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 1000 # 配置全局默认的超时时间=默认值
+      circuitBreaker:
+        requestVolumeThreshold: 20 # 时间窗口内最小请求数，达到最小请求数才可能会触发熔断=默认值
+        sleepWindowInMilliseconds: 5000 # 熔断等待时间=默认值
+      metrics:
+        rollingStats:
+          timeInMilliseconds: 10000 # 时间窗口时间=默认值
+logging:
+  level:
+    com.nestor.springcloudnacoshystrixconsumer.producer: debug
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: basic
+  compression:
+    response:
+      enabled: true
+    request:
+      enabled: true
+  # 开启feign的hystrix熔断降级
+  hystrix:
+    enabled: true
+producer:
+  service:
+    name: spring-cloud-nacos-hystrix-producer
+ribbon:
+  eager-load:
+    enabled: true
+    clients: spring-cloud-nacos-hystrix-producer
+  http:
+    client:
+      enabled: true
+spring-cloud-nacos-hystrix-producer:
+  ribbon:
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RoundRobinRule
+    MaxAutoRetries: 2
+    MaxAutoRetriesNextServer: 0
+    OkToRetryOnAllOperations: false
+    RetryableStatusCodes: 500,404,502
+    ConnectTimeout: 500
+    ReadTimeout: 500
