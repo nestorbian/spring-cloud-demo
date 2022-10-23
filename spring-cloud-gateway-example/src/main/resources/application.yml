@@ -1,5 +1,5 @@
 server:
-  port: 8001
+  port: 8888
 
 management:
   endpoints:
@@ -9,40 +9,85 @@ management:
 spring:
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: '*'
+            allowedMethods: GET,POST,PATCH,DELETE,PUT,OPTION
       routes:
-        - id: time_route
-          uri: https://example.org
-          predicates:
-            - Path=/java
-            - Between=2017-02-20T17:42:47.789-07:00[America/Denver], 2020-02-20T17:42:47.789-07:00[America/Denver]
+#        - id: filter_route
+#          uri: http://localhost:8081
+#          predicates:
+#            - After=2022-10-20T00:05:32.930+08:00[Asia/Shanghai]
+#          filters:
+#            - AddRequestHeader=X-Request-color, red
+#            - AddRequestParameter=color, blue
+#            - PrefixPath=/producer
+#            - CheckAuth=bzy, 18
+#            #直接重定向，不会去路由到http://localhost:8081
+#            - RedirectTo=302, https://www.baidu.com
+#        - id: after_route
+#          uri: http://localhost:8081
+#          predicates:
+#            - After=2022-10-20T00:05:32.930+08:00[Asia/Shanghai]
+#        - id: cookie_route
+#          uri: http://localhost:8081
+#          predicates:
+#            - Cookie=username, bzy
+#          - id: header-route
+#            uri: http://localhost:8081
+#            predicates:
+#              - Header=X-Request-Id, \d+
+#          #需要同时满足才能路由
+#          - id: composite-route
+#            uri: lb://nacos-producer
+#            predicates:
+#              - Header=X-Request-Id, \d+
+#              - Path=/producer/**
+#        - id: path_route
+#          uri: lb://nacos-producer
+#          predicates:
+#            - Path=/producer/**
+#          - id: custom_route
+#            uri: lb://nacos-producer
+#            predicates:
+#              - CheckAuth=Authorization, 123
+#        - id: time_route
+#          uri: https://example.org
+#          predicates:
+#            - Path=/java
+#            - Between=2017-02-20T17:42:47.789-07:00[America/Denver], 2020-02-20T17:42:47.789-07:00[America/Denver]
         #          - Weight=group1, 2
-        - id: cookie_route
-          uri: http://ityouknow.com
-          predicates:
-            - Cookie=name, b.y
-            - Header=X-Request-Id, \d+
-            - Host=**.org
-            - Method=GET
-            - Path=/blue*/{name}
-            - Query=name, bzy
-            - RemoteAddr=127.0.0.1
+#        - id: cookie_route
+#          uri: http://ityouknow.com
+#          predicates:
+#            - Cookie=name, b.y
+#            - Header=X-Request-Id, \d+
+#            - Host=**.org
+#            - Method=GET
+#            - Path=/blue*/{name}
+#            - Query=name, bzy
+#            - RemoteAddr=127.0.0.1
         #          - Weight=group1, 8
-        - id: producer1_route
-          # locator.enabled=false依旧有效，enable能通过http://localhost:8001/服务名/**访问
-          uri: lb://spring-cloud-producer1
-          filters:
-            - AddRequestParameter=name, bzy
-          predicates:
-            #配置成/producer1无法路由/producer1/info，需要配置成/producer1/*
-            - Path=/producer1/info
+#        - id: producer1_route
+#          # locator.enabled=false依旧有效，enable能通过http://localhost:8001/服务名/**访问
+#          uri: lb://spring-cloud-producer1
+#          filters:
+#            - AddRequestParameter=name, bzy
+#          predicates:
+#            #配置成/producer1无法路由/producer1/info，需要配置成/producer1/*
+#            - Path=/producer1/info
       discovery:
         locator:
-          enabled: true
-    consul:
-      host: localhost
-      port: 8500
+          #允许使用服务名去做路由，实际生产建议关闭
+          #http://localhost:8888/nacos-producer/producer/info >>> http://localhost:8081/producer/info
+          enabled: false
+      #启用gateway 默认启用
+      enabled: true
+    nacos:
+      server-addr: localhost:8848
       discovery:
-        service-name: ${spring.application.name}
+        namespace: public
   application:
     name: spring-cloud-gateway-example
 logging:

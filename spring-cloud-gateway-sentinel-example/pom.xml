@@ -9,45 +9,40 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.nestor</groupId>
-    <artifactId>spring-cloud-nacos-producer</artifactId>
+    <artifactId>spring-cloud-gateway-sentinel-example</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>spring-cloud-nacos-producer</name>
+    <name>spring-cloud-gateway-sentinel-example</name>
     <description>Demo project for Spring Boot</description>
-
     <properties>
         <java.version>1.8</java.version>
         <spring-cloud-alibaba.version>2.2.5.RELEASE</spring-cloud-alibaba.version>
         <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
     </properties>
-
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
+
+        <!-- gateway接入sentinel  -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-alibaba-sentinel-gateway</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.nestor</groupId>
-            <artifactId>spring-cloud-openfeign-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>

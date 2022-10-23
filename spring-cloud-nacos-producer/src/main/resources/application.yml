@@ -8,8 +8,9 @@ spring:
         cluster-name: BJ-CLUSTER
         metadata:
           current-version: V2
-        username: nacos
-        password: nacos
+        enabled: true
+  #        username: nacos
+#        password: nacos
   application:
     name: nacos-producer
 server:

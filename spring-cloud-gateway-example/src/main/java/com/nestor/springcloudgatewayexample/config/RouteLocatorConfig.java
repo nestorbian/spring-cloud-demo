@@ -1,5 +1,10 @@
 package com.nestor.springcloudgatewayexample.config;
 
+import java.net.URI;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -13,11 +18,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.CollectionUtils;
-import reactor.core.publisher.Mono;
 
-import java.net.URI;
-import java.util.Collections;
-import java.util.List;
+import reactor.core.publisher.Mono;
 
 @Configuration
 public class RouteLocatorConfig {
@@ -30,20 +32,19 @@ public class RouteLocatorConfig {
     // return XForwardedRemoteAddressResolver.maxTrustedIndex(4);
     // }
 
-    // @Bean
-    // public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
-    // return builder.routes().route("x-forwarded-for-route",
-    // predicateSpec -> predicateSpec.remoteAddr("127.0.0.1", "192.168.0.1")
-    // .and().path("/spring-cloud")
-    // .uri(URI.create("http://www.ityouknow.com"))).build();
-    // }
+    @Bean
+    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
+        return builder.routes().route("x-forwarded-for-route",
+                predicateSpec -> predicateSpec.remoteAddr("127.0.0.1", "192.168.0.1", "0:0:0:0:0:0:0:1").and().path("/spring-cloud").uri(
+                        URI.create("http://www.ityouknow.com"))).build();
+    }
 
     @Bean
     public RouteLocator retryRouteLocator(@Qualifier("tokenGatewayFilter") GatewayFilter tokenGatewayFilter) {
         return builder.routes().route("retryRoute",
-                predicateSpec -> predicateSpec.path("/producer1/error").filters(
-                        gatewayFilterSpec -> gatewayFilterSpec.retry(3).filter(tokenGatewayFilter)).uri(
-                        "lb://spring-cloud-producer1")).build();
+                predicateSpec -> predicateSpec.path("/producer/error").filters(
+                        gatewayFilterSpec -> gatewayFilterSpec.filter(tokenGatewayFilter).retry(3)).uri(
+                                "lb://nacos-producer")).build();
     }
 
     @Bean
@@ -69,6 +70,11 @@ public class RouteLocatorConfig {
             }
             return chain.filter(exchange);
         };
+    }
+
+    public static void main(String[] args) {
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
+        System.out.println(now);
     }
 
 }

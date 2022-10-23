@@ -47,8 +47,8 @@ public class SentinelExceptionHandler {
 	}
 
 	public static ClientHttpResponse fallback(HttpRequest request, byte[] body, ClientHttpRequestExecution execution,
-			BlockException blockException) throws JsonProcessingException {
-		log.error("SentienlExceptionHandler捕获业务异常", blockException);
+			Throwable throwable) throws JsonProcessingException {
+		log.error("SentienlExceptionHandler捕获业务异常", throwable);
 		return new SentinelClientHttpResponse(new ObjectMapper().writeValueAsString(new Result<>("200", "发生业务异常了")));
 	}
 
